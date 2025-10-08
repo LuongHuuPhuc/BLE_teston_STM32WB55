@@ -97,7 +97,7 @@ Tải tại: https://www.st.com/en/development-tools/stm32cubeprog.html
 1. Vào **STM32Cube Programmer**, cắm mạch ST-LINK Debugger vào máy tính. Đảm bảo trong Devive Manager nhận diện được USB.
 - Trong cấu hình, set up như sau:
 
-```yml 
+```sql
 Port: SWD
 Mode: Under Reset
 Access Port: 0 #core M4
