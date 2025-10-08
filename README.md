@@ -95,7 +95,7 @@ Tải tại: https://www.st.com/en/development-tools/stm32cubeprog.html
 
 ## Nạp BLE stack Firmware cho core **M0+**
 1. Vào **STM32Cube Programmer**, cắm mạch ST-LINK Debugger vào máy tính. Đảm bảo trong Devive Manager nhận diện được USB.
-	- Trong cấu hình, set up như sau:
+- Trong cấu hình, set up như sau:
 
 ```yml 
 Port: SWD
