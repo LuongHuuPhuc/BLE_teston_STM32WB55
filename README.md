@@ -106,15 +106,15 @@ Speed: Reliable
 Shared: Enabled
 ```
 
-![Alt text](Images/ST-Link_conf.png)
+![](Images/ST-Link_conf.png)
 
 - Đặc biệt cần phải enabled **Shared** để có thể ST-Link có thể truy cập tài nguyên bộ nhớ chung giữa hai lõi **M4** và **M0+**, tránh xung đột bus khi M0+ (BLE firmware) đang chạy 
 - Sau khi kết nối thành công, giao diện hiển thị ra như sau:
 
-![Alt text](Images/Cubeprg.png)
+![](Images/Cubeprg.png)
 
 - Tiếp theo, từ thanh công cụ bên trái, mở **Firmware Upgrade Service (FUS)**
-- - Trong phần file path, browse và tìm kiếm bên trong folder **Repository** (chứa các packages của STM32Cube) và tìm đúng đến folder chứa firmware của STM32WB có tên `STM32Cube_FW_WB_V1.23.0`
+- Trong phần file path, browse và tìm kiếm bên trong folder **Repository** (chứa các packages của STM32Cube) và tìm đúng đến folder chứa firmware của STM32WB có tên `STM32Cube_FW_WB_V1.23.0`
 - Vào `Projects`, tìm tới `STM32WB_Copro_Wireless_Binaries` và chọn `STM32WB5x`
 - Tìm tới file mà bạn mong muốn nạp, ví dụ BLE thì dùng file `stm32wb5x_BLE_Stack_full_fw.bin`
 - Sau khi chọn xong, nhấn `Firmware Upgrade` để nạp firmware đã chọn vào vùng flash đặc biệt của lõi **M0+**
