@@ -145,18 +145,19 @@ Shared: Enabled
 - Đây là các gói fimrmware của Cortex-M0+ được ST cung cấp. Chọn vào package mà bạn đã load vào firmware vừa này. Sau đó, giao diện sẽ hiển thị phân vùng bộ nhớ chia sẻ (**shared memory**) giữa M4 và M0+
  
  ![Alt text](Images/SharedMem2.png)
- 	- Cột bên trái chính là hình ảnh bản đồ bộ nhớ của lõi Cortex-M4 bao gồm phân vùng RAM và Flash (địa chỉ ảo mà M4 truy cập được)
- 		- RAM chính M4, dung lượng 192KB
- 		- RAM phụ, 64KB, có thể được chia sẻ hoặc dùng riêng
- 		- Một số vùng khác bị Reversed - dành riêng cho M0+ 
-	- Cột bên phải - "Application Region".Đây chính là phân vùng logic do bạn (hoặc CubeMX) tạo ra để gán cho từng lõi hoặc chức năng.
+ 	
+- Cột bên trái chính là hình ảnh bản đồ bộ nhớ của lõi Cortex-M4 bao gồm phân vùng RAM và Flash (địa chỉ ảo mà M4 truy cập được)
+ 	- RAM chính M4, dung lượng 192KB
+	- RAM phụ, 64KB, có thể được chia sẻ hoặc dùng riêng
+	- Một số vùng khác bị Reversed - dành riêng cho M0+ 
+- Cột bên phải - "Application Region".Đây chính là phân vùng logic do bạn (hoặc CubeMX) tạo ra để gán cho từng lõi hoặc chức năng.
  	- Ví dụ trong hình:
  		- `CM0 Firmware Ram2a, Ram2b`: là vùng RAM mà firmware BLE (chạy trên M0+) sử dụng.
  		- `RAM_SHARED`: là vùng RAM được chia sẻ giữa hai lõi để trao đổi dữ liệu (qua IPCC hoặc HSEM). Có thể đổi size, access permission
  		- `RAM`: phần còn lại của RAM dùng riêng cho ứng dụng M4.
  		- Biểu tượng khóa thể hiện đó là Reversed/Locked, bạn không thể thay đổi (vì dành cho stack BLE của ST)
-	- Riêng có bộ nhớ Flash thì chỉ có mỗi M4 có thể ghi được còn M0+ chỉ được đọc thôi
-	- Ngoài ra bạn còn có thể định nghĩa các vùng khác nếu muốn cả 2 lõi đọc được
+		- Riêng có bộ nhớ Flash thì chỉ có mỗi M4 có thể ghi được còn M0+ chỉ được đọc thôi
+		- Ngoài ra bạn còn có thể định nghĩa các vùng khác nếu muốn cả 2 lõi đọc được
 # CHÚ Ý
 - Nếu project của bạn sử dụng cả FreeRTOS thì cần phải chuyển qua CMSIS_V2 lý do là vì:
 	- Các thành phần trong STM32_WPAN được viết dựa trên CMSIS_V2 API, chứ không dùng trực tiếp CMSIS_V1 như FreeRTOS API native 
