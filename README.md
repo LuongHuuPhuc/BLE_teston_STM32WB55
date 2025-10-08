@@ -105,7 +105,6 @@ Reset Mode: Hardware Reset
 Speed: Reliable 
 Shared: Enabled
 ```
-
 ![](Images/ST-Link_conf.png)
 
 - Đặc biệt cần phải enabled **Shared** để có thể ST-Link có thể truy cập tài nguyên bộ nhớ chung giữa hai lõi **M4** và **M0+**, tránh xung đột bus khi M0+ (BLE firmware) đang chạy 
