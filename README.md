@@ -94,7 +94,13 @@ Tải tại: https://www.st.com/en/development-tools/stm32cubeprog.html
 - Cơ chế giao tiếp giữa **M4** và **M0+** là IPCC + **shared RAM** + Transport Layer (TL/HCI-like)
 
 ## Nạp BLE stack Firmware cho core **M0+**
-1. Vào **STM32Cube Programmer**, cắm mạch ST-LINK Debugger vào máy tính. Đảm bảo trong Devive Manager nhận diện được USB.
+- Trước đó, hãy xem qua về cách phân chia bộ nhớ Flash bên trong STM32WB5x
+
+![](Images/MemPartition.png)
+
+- Giải thích: 
+	- 
+- Vào **STM32Cube Programmer**, cắm mạch ST-LINK Debugger vào máy tính. Đảm bảo trong Devive Manager nhận diện được USB.
 - Trong cấu hình, set up như sau:
 
 ```sql
@@ -112,15 +118,51 @@ Shared: Enabled
 
 ![](Images/Cubeprg.png)
 
-- Tiếp theo, từ thanh công cụ bên trái, mở **Firmware Upgrade Service (FUS)**
+- Tiếp theo, từ thanh công cụ bên trái, mở **Firmware Upgrade Service (FUS)** - giao diện hỗ trợ nạp firmware cho FUS trong core M0+
+	- FUS chính là 1 firmware nhỏ chạy bên trong core M0+ có nhiệm vụ:
+		+ Cập nhật hoặc xóa các firmware khác trên M0+ (ví dụ: BLE stack, Thread stack,...)
+		+ Quản lý flash và vùng bảo mật của cho core thứ 2 (M0+)
+		+ Nạp firmware **Wireless Corporcessor Binary** vào vùng flash cố định
+		
+![Alt text](Images/FUS.png)
+
 - Trong phần file path, browse và tìm kiếm bên trong folder **Repository** (chứa các packages của STM32Cube) và tìm đúng đến folder chứa firmware của STM32WB có tên `STM32Cube_FW_WB_V1.23.0`
 - Vào `Projects`, tìm tới `STM32WB_Copro_Wireless_Binaries` và chọn `STM32WB5x`
-- Tìm tới file mà bạn mong muốn nạp, ví dụ BLE thì dùng file `stm32wb5x_BLE_Stack_full_fw.bin`
-- Sau khi chọn xong, nhấn `Firmware Upgrade` để nạp firmware đã chọn vào vùng flash đặc biệt của lõi **M0+**
-- Sau khi nạp xong sẽ hiển thị `Firmware Upgrade Successfully`
+- Tìm tới file mà bạn mong muốn nạp, ví dụ BLE thì dùng file `stm32wb5x_BLE_Stack_full_fw.bin`.
+	- Mỗi file firmware sẽ có 1 phiên bản STACK. Cụ thể trong hình phiên bản hiện tại của firmware là `V1.23.0` hiển thị ở `Selected file:`.
+	
+![](Images/BLE_stack.png)
+
+
+- Tiếp theo nhấn nhấn vào **Start FUS** để yêu cầu CPU khởi động FUS và vào chế độ quản lý firmware. Nút này có mục đích là tạm dừng lại các App hiện tại đang chạy để sẵn sàng cho việc Update, xóa hoặc kiểm tra Firmware cho lõi.
+- Sau đó nhấn `Firmware Upgrade` để nạp firmware stack đã chọn vào vùng flash đặc biệt của lõi **M0+**
+- Sau khi nạp xong sẽ hiển thị `Firmware Upgrade Successfully`.
+- Để kiểm tra phiên bản **STACK** sau khi đã nạp, hãy nhấn vào **Read FUS infos** để kiểm tra
+	- Và phiên bản của **STACK version** sẽ là phiên bản sau khi đã nạp firmware vào flash
 - Từ nay về sau, mỗi lần nạp code trên core **M4**, nó sẽ giao tiếp với M0+ qua IPCC để điều khiển BLE stack
 
-![Alt text](Images/FUS.png)
+## CHÚ Ý
+- Trong package software của STM32WB5xx mới nhất, yêu cầu **FUS version** phải đúng yêu câu thì mới có thể hỗ trợ nạp firmware Wireless Stack thành công 
+- Ví dụ, với phiên bản `stm32wb5x_BLE_Stack_full_fw` version `1.23.0` thì yêu cầu phiên bản FUS phải là 2.0 (đọc trong `Release Note` của package) 
+
+![](Images/WirelessStackVer.png)
+
+- Nếu phiên bản FUS hiện tại bé hơn phiên bản yêu của firmware thì sẽ bị lỗi khi `Firmware Upgrade`. Khi đó bạn cần phải update FUS lên phiên bản mới hoặc dùng phiên bản firmware stack cũ.
+
+### Cách Update FUS ###
+- Trong **Firmware Upgrade Services**, nhấn vào **Browse** để tìm file `.bin` để nạp. Vị trí nằm trong `\Repository\STM32Cube_FW_WB_V1.23.0\Projects\STM32WB_Copro_Wireless_Binaries\STM32WB5x`
+- Bình thường, package sẽ có 3 file để update FUS như sau:
+	- `stm32wb5x_FUS_fw.bin` => file để update firmware cho FUS lên bản mới nhất (tùy package cung cấp)
+	- `stm32wb5x_FUS_fw_1_2_0.bin` => file phiên bản cũ (v1.2.0)
+	- `stm32wb5x_FUS_fw_for_fus_0_5_3.bin` 
+
+- Chọn `stm32wb5x_FUS_fw.bin`, khi đó giao diện sẽ hiển thị ra phiên bản của file ở phần `Selected file:`=> Đây chính là phiên bản FUS sẽ được update lên
+
+![](Images/FUS_update.png)
+
+- Tiếp theo nhấn vào **Start FUS** để yêu cầu CPU khởi động FUS và vào chế độ quản lý firmware.
+- Sau đó nhấn `Firmware Upgrade` => Sau khi upgrade thành công sẽ hiển thị *"Firmware upgrade success!"*
+- Để kiểm tra phiên bản hiện tại đã đúng chưa, nhấn vào **Read FUS infos**
 
 # QUY TRÌNH TẠO PROJECT & NẠP CHƯƠNG TRÌNH TRÊN STM32CUBE IDE #
 ## 1. Mở STM32CubeIDE -> New STM32 project ##
@@ -158,6 +200,28 @@ Shared: Enabled
  		- Biểu tượng khóa thể hiện đó là Reversed/Locked, bạn không thể thay đổi (vì dành cho stack BLE của ST)
 		- Riêng có bộ nhớ Flash thì chỉ có mỗi M4 có thể ghi được còn M0+ chỉ được đọc thôi
 		- Ngoài ra bạn còn có thể định nghĩa các vùng khác nếu muốn cả 2 lõi đọc được
+		
+# FUN FACT
+- Con STM32WB5xx có 2 nhân (dual-core):
+	- Core M4: chạy ứng dụng chính của bạn (User Application)
+	- Core M0+: dành riêng cho Wireless Stack (BLE/ZigBee/Thread) và chỉ được điều khiển bởi FUS (Firmware Update Service)
+	
+- Cả hai core chia sẻ chung một flash, nhưng vùng nhớ được chia sẽ rất cụ thể như sau (ví dụ **STM32WB55CGU6**)
+|Khu vực|Core sử dụng|Mục đích|Ghi chú|
+|-------|------------|--------|-------|
+|0x08000000–0x0803FFFF|M4|Ứng dụng người dùng (User App)|Chương trình của bạn|
+|0x08040000–0x0807FFFF|M0+|BLE Stack / Zigbee Stack|FUS nạp và bảo vệ|
+|0x0807F000–0x0807FFFF|M0+|FUS (Firmware Upgrade Service)|Không thể sửa trực tiếp|
+
+## Khi bạn Update Stack cho M0+, điều gì xảy ra ?
+- Khi bạn dùng **STM32CubeProgrammer** → **Firmware Upgrade Services** → **Start Wireless Stack** / **Firmware Upgrade**, phần mềm sẽ gửi lệnh đến FUS, yêu cầu nó:
+> “Hãy xóa vùng flash hiện tại và ghi đè firmware mới vào khu vực Wireless Stack.”
+
+- Vấn đề nằm ở chỗ:
+	- Để đảm bảo tính toàn vẹn và bảo mật, FUS thường sẽ xóa toàn bộ cả flash (trừ chính vùng FUS) trước khi ghi stack mới.
+	- Điều này bao gồm luôn cả vùng User App (core M4) vì ST muốn chắc chắn không có mã người dùng nào đang truy cập sai vùng hoặc can thiệp vào M0+ trong lúc update 
+- Vì vậy, khi bạn update M0+ stack, toàn bộ flash (bao gồm app M4) bị xóa — hoàn toàn bình thường!
+
 # CHÚ Ý
 - Nếu project của bạn sử dụng cả FreeRTOS thì cần phải chuyển qua CMSIS_V2 lý do là vì:
 	- Các thành phần trong STM32_WPAN được viết dựa trên CMSIS_V2 API, chứ không dùng trực tiếp CMSIS_V1 như FreeRTOS API native 
