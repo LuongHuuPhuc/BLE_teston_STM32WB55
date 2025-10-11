@@ -24,14 +24,15 @@ Exchange data via Characteristics
 
 ## Tổng thế các lớp trong BLE stack của STM32WB55
 Trên STM32WB55, firmware BLE được chia theo 4 tầng:
-| Layer |Mục đích | Ví dụ hàm|
+| Layer |Mục đích | Ví dụ hàm |
+|-------|---------|-----------|
 |Application Layer (CPU1) | Code của bạn (Advertise, GATT, Service, Xử lý event,...)|`APP_BLE_Init()` |
 |Transport Layer (TL) CPU1 | Giao tiếp CPU1 <-> CPU2 qua IPCC | `appe_tl_init()`, `TL_Init()`|
 |Wireless Stack (CPU2) | BLE stack chính thức của ST (GAP, GATT, L2CAP, HCI,..) | Chạy trong firmware `stm32wb5x_BLE_Stack_full_fw.bin`|
 |RF Hardware Layer | Mạch RF vật lý, atten, clock,..| cấu hình bởi `MX_RF_Init()`| 
 
 - Khi CPU1 (ứng dụng) bắt đầu chạy, nó phải thiết lập giao tiếp và khởi động CPU2 (BLE stack), sau đó mới được phép dùng
-- Toàn bộ flow code trong Middware STM32_WLAN:
+- Toàn bộ flow code trong Middleware STM32_WLAN:
 ```scss
 main()
  └─ MX_APPE_Init()
